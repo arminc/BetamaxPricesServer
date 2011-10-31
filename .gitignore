@@ -1,0 +1,9 @@
+#Ignore eclipse files
+.project
+.settings
+
+#Ignore other
+tmpTestFolder
+war/WEB-INF/lib/*
+war/WEB-INF/classes
+war/WEB-INF/appengine-generated
