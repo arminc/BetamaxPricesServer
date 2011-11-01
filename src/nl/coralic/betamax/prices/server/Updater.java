@@ -1,18 +1,18 @@
 package nl.coralic.betamax.prices.server;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import nl.coralic.betamax.prices.server.datastore.Database;
-import nl.coralic.betamax.prices.server.datastore.PriceEntity;
+import nl.coralic.betamax.prices.server.http.UrlFetcher;
+import nl.coralic.betamax.prices.server.parsers.DocumentParser;
+import nl.coralic.betamax.prices.server.parsers.HtmlResponseParser;
 
 public class Updater
 {
     private static List<String> providers = Arrays.asList("dialnow.com");
 
-    public static void updateSmsPrices()
+    public static void updatePrices()
     {
 	for (String provider : providers)
 	{
@@ -22,15 +22,30 @@ public class Updater
 
     private static void update(String provider)
     {
-	String responseData = UrlFetcher.fetchSmsRates(provider);
-	HashMap<String, String> smsPrices = getSmsPricesFromResponse(responseData);
-	//TODO: extract the exchange rates from the same response data and save these as well
-	//Database.savePrices(provider, prices);
+	HashMap<String, String> smsPrices = getSmsPricesFromResponse(provider);
+	HashMap<String, String> callPrices = getCallPricesFromResponse(provider);
+	HashMap<String, String> exchangeRates = getExchangeRatesFromResponse(provider);
+	//TODO: do something with this
     }
 
-    private static HashMap<String, String> getSmsPricesFromResponse(String responseData)
+    private static HashMap<String, String> getSmsPricesFromResponse(String provider)
     {
-	String pricesTableData = HtmlResponseParser.parseResponseToSmsPricesTable(responseData);
+	String responseData = UrlFetcher.fetchSmsRates(provider);
+	String pricesTableData = HtmlResponseParser.parseResponseToPricesTable(responseData);
 	return DocumentParser.getPricesFromTableData(pricesTableData);
+    }
+    
+    private static HashMap<String, String> getCallPricesFromResponse(String provider)
+    {
+	String responseData = UrlFetcher.fetchCallingRates(provider);
+	String pricesTableData = HtmlResponseParser.parseResponseToPricesTable(responseData);
+	return DocumentParser.getPricesFromTableData(pricesTableData);
+    }
+    
+    private static HashMap<String, String> getExchangeRatesFromResponse(String provider)
+    {
+	String responseData = UrlFetcher.fetchSmsRates(provider);
+	String exchangeRatesTableData = HtmlResponseParser.parseResponseToExchangeTable(responseData);
+	return DocumentParser.getExchangeRatesFromTableData(exchangeRatesTableData);
     }
 }

@@ -17,6 +17,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import static org.junit.Assert.*;
+import nl.coralic.betamax.prices.server.http.UrlFetcher;
+import nl.coralic.betamax.prices.server.parsers.DocumentParser;
+import nl.coralic.betamax.prices.server.parsers.StringManipulations;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -41,23 +45,27 @@ public class ProviderTest
 	assertNotNull(responseData);
 	writeStringToFile("SMS_STEP1.html", responseData);
 	// Step 2
-	String tmpDataOne = HtmlResponseParser.getPricesTable(responseData);
-	assertNotNull(tmpDataOne);
-	writeStringToFile("SMS_STEP2.html", tmpDataOne);
+	String pricesTable = StringManipulations.getPricesTable(responseData);
+	assertNotNull(pricesTable);
+	writeStringToFile("SMS_STEP2.html", pricesTable);
+	// Step 3
+	StringBuffer tableWithoutUnwantedTrTags = StringManipulations.removeUnwantedTrTagsFromTable(pricesTable);
+	assertNotNull(tableWithoutUnwantedTrTags);
+	writeStringToFile("SMS_STEP3.html", tableWithoutUnwantedTrTags.toString());
 	// Step 4
-	String tmpDataThree = HtmlResponseParser.removeUnwantedTrsFromSmsTableAndAddRootTag(tmpDataOne);
-	assertNotNull(tmpDataThree);
-	writeStringToFile("SMS_STEP4.html", tmpDataThree);
+	String completeTable = StringManipulations.addRootTags(tableWithoutUnwantedTrTags);
+	assertNotNull(completeTable);
+	writeStringToFile("SMS_STEP4.xml", completeTable);
 	// Step 5
-	String tmpDataFour = HtmlResponseParser.removeUnwantedChars(tmpDataThree);
-	assertNotNull(tmpDataFour);
-	writeStringToFile("SMS_STEP5.xml", tmpDataFour);
+	String tableWithoutUnwantedChars = StringManipulations.removeUnwantedChars(completeTable);
+	assertNotNull(tableWithoutUnwantedChars);
+	writeStringToFile("SMS_STEP5.xml", tableWithoutUnwantedChars);
 	// Step 6
-	Document document = DocumentParser.parseTableDataToXmlDocument(tmpDataFour);
+	Document document = DocumentParser.parseTableDataToXmlDocument(tableWithoutUnwantedChars);
 	assertNotNull(document);
 	writeDocumentToFile("SMS_STEP6.xml", document);
-	// Step 7
-	HashMap<String, String> pricesMap = DocumentParser.getPricesFromTableData(tmpDataFour);
+	// Step 6
+	HashMap<String, String> pricesMap = DocumentParser.getPricesFromTableData(tableWithoutUnwantedChars);
 	assertNotNull(pricesMap);
 	writeHasMapToFile("SMS_STEP7.txt", pricesMap);
     }
@@ -70,23 +78,27 @@ public class ProviderTest
 	assertNotNull(responseData);
 	writeStringToFile("CALL_STEP1.html", responseData);
 	// Step 2
-	String tmpDataOne = HtmlResponseParser.getPricesTable(responseData);
-	assertNotNull(tmpDataOne);
-	writeStringToFile("CALL_STEP2.html", tmpDataOne);
+	String pricesTable = StringManipulations.getPricesTable(responseData);
+	assertNotNull(pricesTable);
+	writeStringToFile("CALL_STEP2.html", pricesTable);
+	// Step 3
+	StringBuffer tableWithoutUnwantedTrTags = StringManipulations.removeUnwantedTrTagsFromTable(pricesTable);
+	assertNotNull(tableWithoutUnwantedTrTags);
+	writeStringToFile("CALL_STEP3.html", tableWithoutUnwantedTrTags.toString());
 	// Step 4
-	String tmpDataThree = HtmlResponseParser.removeUnwantedTrsFromCallTableAndAddRootTag(tmpDataOne);
-	assertNotNull(tmpDataThree);
-	writeStringToFile("CALL_STEP4.html", tmpDataThree);
+	String completeTable = StringManipulations.addRootTags(tableWithoutUnwantedTrTags);
+	assertNotNull(completeTable);
+	writeStringToFile("SMS_STEP4.xml", completeTable);
 	// Step 5
-	String tmpDataFour = HtmlResponseParser.removeUnwantedChars(tmpDataThree);
-	assertNotNull(tmpDataFour);
-	writeStringToFile("CALL_STEP5.xml", tmpDataFour);
+	String tableWithoutUnwantedChars = StringManipulations.removeUnwantedChars(completeTable);
+	assertNotNull(tableWithoutUnwantedChars);
+	writeStringToFile("CALL_STEP5.xml", tableWithoutUnwantedChars);
 	// Step 6
-	Document document = DocumentParser.parseTableDataToXmlDocument(tmpDataFour);
+	Document document = DocumentParser.parseTableDataToXmlDocument(tableWithoutUnwantedChars);
 	assertNotNull(document);
 	writeDocumentToFile("CALL_STEP6.xml", document);
 	// Step 7
-	HashMap<String, String> pricesMap = DocumentParser.getPricesFromTableData(tmpDataFour);
+	HashMap<String, String> pricesMap = DocumentParser.getPricesFromTableData(tableWithoutUnwantedChars);
 	assertNotNull(pricesMap);
 	writeHasMapToFile("CALL_STEP7.txt", pricesMap);
     }
@@ -99,9 +111,17 @@ public class ProviderTest
 	assertNotNull(responseData);
 	writeStringToFile("EXCHANGE_STEP1.html", responseData);
 	// Step 2
-	String tmpDataOne = HtmlResponseParser.getRawExchangeSelectData(responseData);
-	assertNotNull(tmpDataOne);
-	writeStringToFile("EXCHANGE_STEP2.html", tmpDataOne);
+	String exchangeTable = StringManipulations.getExchangeTable(responseData);
+	assertNotNull(exchangeTable);
+	writeStringToFile("EXCHANGE_STEP2.html", exchangeTable);
+	// Step 3
+	Document document = DocumentParser.parseTableDataToXmlDocument(exchangeTable);
+	assertNotNull(document);
+	writeDocumentToFile("EXCHANGE_STEP3.xml", document);
+	// Step 4
+	HashMap<String, String> exchangeMap = DocumentParser.getExchangeRatesFromTableData(exchangeTable);
+	assertNotNull(exchangeMap);
+	writeHasMapToFile("EXCHANGE_STEP4.txt", exchangeMap);
     }
 
     private static void createOrEmptyFolder()
