@@ -90,5 +90,4 @@ public class StringManipulations
 	price = price.substring(0, end);
 	return price;
     }
-
 }

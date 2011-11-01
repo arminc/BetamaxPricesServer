@@ -6,19 +6,19 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 	<servlet>
 		<servlet-name>UpdateServlet</servlet-name>
-		<servlet-class>nl.coralic.beta.sms.server.UpdateServlet</servlet-class>
+		<servlet-class>nl.coralic.betamax.prices.server.servlets.UpdateServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>ShowServlet</servlet-name>
-		<servlet-class>nl.coralic.beta.sms.server.ShowServlet</servlet-class>
+		<servlet-name>GetPriceServlet</servlet-name>
+		<servlet-class>nl.coralic.betamax.prices.server.servlets.GetPriceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UpdateServlet</servlet-name>
 		<url-pattern>/update</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ShowServlet</servlet-name>
-		<url-pattern>/show</url-pattern>
+		<servlet-name>GetPriceServlet</servlet-name>
+		<url-pattern>/getprice</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

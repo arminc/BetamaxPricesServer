@@ -25,7 +25,9 @@ public class Updater
 	HashMap<String, String> smsPrices = getSmsPricesFromResponse(provider);
 	HashMap<String, String> callPrices = getCallPricesFromResponse(provider);
 	HashMap<String, String> exchangeRates = getExchangeRatesFromResponse(provider);
-	//TODO: do something with this
+	Prices.setSmsPrices(smsPrices);
+	Prices.setCallPrices(callPrices);
+	Prices.setExchangeRates(exchangeRates);
     }
 
     private static HashMap<String, String> getSmsPricesFromResponse(String provider)
